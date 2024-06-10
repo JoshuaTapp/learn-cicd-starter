@@ -22,7 +22,7 @@ jobs:
         run: go test -cover ./...
 
   formats:
-    name: Format Go Code
+    name: Format
     runs-on: ubuntu-latest
 
     steps:
