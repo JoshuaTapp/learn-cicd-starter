@@ -27,6 +27,14 @@ jobs:
             - name: build app
               run: scripts/buildprod.sh
 
+            - name: Check for DATABASE_URL in code changes
+              run: |
+                if git diff --cached | grep -E 'DATABASE_URL'; then
+                  echo "Error: Detected the DATABASE_URL environment variable in the code changes."
+                  echo "Please remove or mask this secret before committing."
+                  exit 1
+                fi
+
             - name: GCP Auth
               uses: google-github-actions/auth@v2
               with:
@@ -43,14 +51,6 @@ jobs:
             
             - name: run db migrations
               run: scripts/migrateup.sh 
-
-            - name: Check for DATABASE_URL in code changes
-              run: |
-                if git diff --cached | grep -E 'DATABASE_URL'; then
-                  echo "Error: Detected the DATABASE_URL environment variable in the code changes."
-                  echo "Please remove or mask this secret before committing."
-                  exit 1
-                fi
 
             - name: Deploy to Cloud Run
               run: gcloud run deploy notely --image us-central1-docker.pkg.dev/notely-426112/notely-ar-repo/notely --region us-central1 --allow-unauthenticated --project notely-426112 --max-instances=4
