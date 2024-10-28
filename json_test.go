@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -16,7 +16,7 @@ func TestRespondWithError(t *testing.T) {
 		t.Errorf("expected status code %d, got %d", http.StatusBadRequest, w.Code)
 	}
 
-	responseBody, _ := ioutil.ReadAll(w.Body)
+	responseBody, _ := io.ReadAll(w.Body)
 	expectedResponse := map[string]string{"error": "bad request error"}
 	var actualResponse map[string]string
 	err := json.Unmarshal(responseBody, &actualResponse)
@@ -38,7 +38,7 @@ func TestRespondWithJSONSuccess(t *testing.T) {
 		t.Errorf("expected status code %d, got %d", http.StatusOK, w.Code)
 	}
 
-	responseBody, _ := ioutil.ReadAll(w.Body)
+	responseBody, _ := io.ReadAll(w.Body)
 	var actualResponse map[string]string
 	err := json.Unmarshal(responseBody, &actualResponse)
 	if err != nil {
